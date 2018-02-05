@@ -2,11 +2,16 @@ var RESOLUTION = 10;
 var LINE_WIDTH = "1";
 
 var img = new Image();
-img.src = 'laila.jpg';
+img.src = 'RGB-space.jpg';
 var img_canvas = document.getElementById('image');
-var stickfigure_canvas = document.getElementById('stickfigure');
-var color = document.getElementById('color');
+img_canvas.width = img.width;
+img_canvas.height = img.height;
 
+var stickfigure_canvas = document.getElementById('stickfigure');
+stickfigure_canvas.width = img_canvas.width;
+stickfigure_canvas.height = img_canvas.height;
+
+var color = document.getElementById('color');
 
 function array_to_rgba(array){
     return 'rgba(' + array[0] + ', ' + array[1] +
