@@ -11,7 +11,6 @@ function draw_line(context, start_x, start_y, end_x, end_y, color){
 }
 
 function draw_stick_figure(context, color, x_pos, y_pos, size){
-  //context.clearRect(x_pos, y_pos, size, size);
   var angle_red   = ((color[0]/255.0) * 120.0)       * (Math.PI / 180.0);
   var angle_green = ((color[1]/255.0) * 120.0 + 120) * (Math.PI / 180.0);
   var angle_blue  = ((color[2]/255.0) * 120.0 + 240) * (Math.PI / 180.0);
@@ -36,8 +35,11 @@ function draw_stick_figure(context, color, x_pos, y_pos, size){
             "blue");
 }
 
-function image_to_stickpic(image_canvas, stickpic_canvas){
-  
+function image_to_stickpic(image_canvas){
+  output_canvas = document.createElement("canvas");
+  output_canvas.width = image_canvas.width;
+  output_canvas.height = image_canvas.height;
+
   var amount_horizontal = Math.floor(image_canvas.width / RESOLUTION);
   var amount_vertical = Math.floor(image_canvas.height / RESOLUTION);
 
@@ -58,25 +60,28 @@ function image_to_stickpic(image_canvas, stickpic_canvas){
       average[2] = average[2] / (image_data.data.length / 4);
       average[3] = average[3] / (image_data.data.length / 4);
 
-      draw_stick_figure(stickpic_canvas.getContext('2d'), average, x * RESOLUTION, y * RESOLUTION, RESOLUTION);
+      draw_stick_figure(output_canvas.getContext('2d'), average, x * RESOLUTION, y * RESOLUTION, RESOLUTION);
     }
   }
-}
+  return output_canvas;
+  }  
 
-function array_to_rgba(array){
-    return 'rgba(' + array[0] + ', ' + array[1] +
-             ', ' + array[2] + ', ' + (array[3] / 255) + ')';
-}
+var WIDTH = 1280;
+var HEIGHT = 720;
+document.getElementById('webcam').width = WIDTH;
+document.getElementById('webcam').height = HEIGHT;
 
 camera.init({
-  width: 1280, // default: 640
-  height: 720, // default: 480
+  width: WIDTH, // default: 640
+  height: HEIGHT, // default: 480
   fps: 30, // default: 30
-  mirror: false,  // default: false
-  targetCanvas: document.getElementById('webcam'), // default: null 
+  mirror: true,  // default: false
+  targetCanvas: null, //document.getElementById('webcam'), // default: null 
 
   onFrame: function(canvas) {
-    image_to_stickpic(canvas, canvas);
+    var stickpic = image_to_stickpic(canvas);
+    document.getElementById('webcam').getContext('2d').clearRect(0,0,WIDTH,HEIGHT);
+    document.getElementById('webcam').getContext('2d').drawImage(stickpic,0,0);
     // do something with image data found in the canvas argument
   },
 
