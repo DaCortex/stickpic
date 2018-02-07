@@ -1,4 +1,5 @@
 var RESOLUTION = 20;
+var AVERAGE = true;
 var LINE_WIDTH = "1";
 
 function draw_line(context, start_x, start_y, end_x, end_y, color){
@@ -45,22 +46,28 @@ function image_to_stickpic(image_canvas){
 
   for (var x = 0; x < amount_horizontal; x++) {
     for (var y = 0; y < amount_vertical; y++) {
-      var image_data = image_canvas.getContext('2d').getImageData(x * RESOLUTION, y * RESOLUTION, RESOLUTION, RESOLUTION);
+      if(AVERAGE){
+        var image_data = image_canvas.getContext('2d').getImageData(x * RESOLUTION, y * RESOLUTION, RESOLUTION, RESOLUTION);
 
-      var average = [0,0,0,0];
-      for(var i = 0; i < image_data.data.length; i += 4)
-      {
-        average[0] += image_data.data[i];
-        average[1] += image_data.data[i+1];
-        average[2] += image_data.data[i+2];
-        average[3] += image_data.data[i+3];
-      }
-      average[0] = average[0] / (image_data.data.length / 4);
-      average[1] = average[1] / (image_data.data.length / 4);
-      average[2] = average[2] / (image_data.data.length / 4);
-      average[3] = average[3] / (image_data.data.length / 4);
+        var average = [0,0,0,0];
+        for(var i = 0; i < image_data.data.length; i += 4)
+        {
+          average[0] += image_data.data[i];
+          average[1] += image_data.data[i+1];
+          average[2] += image_data.data[i+2];
+          average[3] += image_data.data[i+3];
+        }
+        average[0] = average[0] / (image_data.data.length / 4);
+        average[1] = average[1] / (image_data.data.length / 4);
+        average[2] = average[2] / (image_data.data.length / 4);
+        average[3] = average[3] / (image_data.data.length / 4);
 
-      draw_stick_figure(output_canvas.getContext('2d'), average, x * RESOLUTION, y * RESOLUTION, RESOLUTION);
+        draw_stick_figure(output_canvas.getContext('2d'), average, x * RESOLUTION, y * RESOLUTION, RESOLUTION);
+    }
+    else{
+        var image_data = image_canvas.getContext('2d').getImageData(x * RESOLUTION, y * RESOLUTION, 1, 1);
+        draw_stick_figure(output_canvas.getContext('2d'), image_data.data, x * RESOLUTION, y * RESOLUTION, RESOLUTION);
+    }
     }
   }
   return output_canvas;
