@@ -44,10 +44,16 @@ function image_to_stickpic(image_canvas){
   var amount_horizontal = Math.floor(image_canvas.width / RESOLUTION);
   var amount_vertical = Math.floor(image_canvas.height / RESOLUTION);
 
+  var input_context = image_canvas.getContext('2d');
+  var output_context = output_canvas.getContext('2d');
+
+  output_context.fillStyle = "black";
+  output_context.fillRect( 0, 0, output_canvas.width, output_canvas.height);
+
   for (var x = 0; x < amount_horizontal; x++) {
     for (var y = 0; y < amount_vertical; y++) {
       if(AVERAGE){
-        var image_data = image_canvas.getContext('2d').getImageData(x * RESOLUTION, y * RESOLUTION, RESOLUTION, RESOLUTION);
+        var image_data = input_context.getImageData(x * RESOLUTION, y * RESOLUTION, RESOLUTION, RESOLUTION);
 
         var average = [0,0,0,0];
         for(var i = 0; i < image_data.data.length; i += 4)
@@ -62,14 +68,15 @@ function image_to_stickpic(image_canvas){
         average[2] = average[2] / (image_data.data.length / 4);
         average[3] = average[3] / (image_data.data.length / 4);
 
-        draw_stick_figure(output_canvas.getContext('2d'), average, x * RESOLUTION, y * RESOLUTION, RESOLUTION);
+        draw_stick_figure(output_context, average, x * RESOLUTION, y * RESOLUTION, RESOLUTION);
     }
     else{
-        var image_data = image_canvas.getContext('2d').getImageData(x * RESOLUTION, y * RESOLUTION, 1, 1);
-        draw_stick_figure(output_canvas.getContext('2d'), image_data.data, x * RESOLUTION, y * RESOLUTION, RESOLUTION);
+        var image_data = input_context.getImageData(x * RESOLUTION, y * RESOLUTION, 1, 1);
+        draw_stick_figure(output_context, image_data.data, x * RESOLUTION, y * RESOLUTION, RESOLUTION);
     }
     }
   }
+  //output_context.stroke();
   return output_canvas;
   }  
 
@@ -104,3 +111,4 @@ camera.init({
     // instruct the user to get a better browser
   }
 });
+
