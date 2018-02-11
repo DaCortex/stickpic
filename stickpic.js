@@ -36,8 +36,7 @@ function draw_stick_figure(context, color, x_pos, y_pos, size){
             "blue");
 }
 
-function image_to_stickpic(image_canvas){
-  output_canvas = document.createElement("canvas");
+function image_to_stickpic(image_canvas, output_canvas){
   output_canvas.width = image_canvas.width;
   output_canvas.height = image_canvas.height;
 
@@ -46,9 +45,6 @@ function image_to_stickpic(image_canvas){
 
   var input_context = image_canvas.getContext('2d');
   var output_context = output_canvas.getContext('2d');
-
-  output_context.fillStyle = "black";
-  output_context.fillRect( 0, 0, output_canvas.width, output_canvas.height);
 
   for (var x = 0; x < amount_horizontal; x++) {
     for (var y = 0; y < amount_vertical; y++) {
@@ -76,12 +72,13 @@ function image_to_stickpic(image_canvas){
     }
     }
   }
-  //output_context.stroke();
-  return output_canvas;
-  }  
+}  
 
+var dimensions = viewport()
 var WIDTH = 1280;
 var HEIGHT = 720;
+var OUTPUT_CANVAS = document.getElementById('webcam')
+
 document.getElementById('webcam').width = WIDTH;
 document.getElementById('webcam').height = HEIGHT;
 
@@ -93,9 +90,9 @@ camera.init({
   targetCanvas: null, //document.getElementById('webcam'), // default: null 
 
   onFrame: function(canvas) {
-    var stickpic = image_to_stickpic(canvas);
-    document.getElementById('webcam').getContext('2d').clearRect(0,0,WIDTH,HEIGHT);
-    document.getElementById('webcam').getContext('2d').drawImage(stickpic,0,0);
+    OUTPUT_CANVAS.getContext('2d').clearRect(0,0,WIDTH,HEIGHT);
+    image_to_stickpic(canvas, OUTPUT_CANVAS);
+    OUTPUT_CANVAS.getContext('2d').drawImage(stickpic,0,0);
     // do something with image data found in the canvas argument
   },
 
